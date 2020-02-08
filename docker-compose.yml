@@ -1,0 +1,55 @@
+version: '3'
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 160.15.101.0/24
+
+services:
+  postgresql:
+    container_name: game_postgresql
+    image: postgres:11-alpine
+    hostname: postgresql.game.local
+    environment:
+      POSTGRES_USER: game
+      POSTGRES_PASSWORD: game
+      POSTGRES_DB: game
+    expose:
+      - 5432
+    networks:
+      default:
+        ipv4_address: 160.15.101.2
+
+  app:
+    container_name: game_app
+    build:
+      context: .
+      dockerfile: docker/go/Dockerfile
+    environment:
+      DB_USER: game
+      DB_NAME: game
+      DB_ADDR: postgresql:5432
+      DB_PASSWORD: game
+      LISTEN_PORT: 8000
+      DB_POOL_SIZE: 10
+    expose:
+      - 8000
+    networks:
+      default:
+        ipv4_address: 160.15.101.3
+    extra_hosts:
+      - "postgresql.game.local:160.15.101.2"
+
+  nginx:
+    container_name: game_nginx
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    depends_on:
+      - app
+    networks:
+      default:
+        ipv4_address: 160.15.101.4
+    expose:
+      - "80"
