@@ -1,9 +1,13 @@
 package entities
 
-import "github.com/soulgarden/game/dictionaries"
+import (
+	uuid "github.com/satori/go.uuid"
+	"github.com/soulgarden/game/dictionaries"
+)
 
 //Player entity
 type Player struct {
+	ID            string
 	Age           int32
 	health        int32
 	physicalPower int32
@@ -13,9 +17,9 @@ type Player struct {
 	luckiness     int32
 	hunger        int32
 	Location      struct {
-		X int32
-		Y int32
-		Z int32
+		X int
+		Y int
+		Z int
 	}
 	equipment struct {
 		weapon int32
@@ -29,6 +33,7 @@ type Player struct {
 //NewPlayer nwe player instance
 func NewPlayer(race int32) *Player {
 	return &Player{
+		ID:            uuid.NewV4().String(),
 		Age:           dictionaries.StartAge,
 		health:        0,
 		physicalPower: 0,
@@ -38,9 +43,9 @@ func NewPlayer(race int32) *Player {
 		luckiness:     0,
 		hunger:        0,
 		Location: struct {
-			X int32
-			Y int32
-			Z int32
+			X int
+			Y int
+			Z int
 		}{
 			X: 0,
 			Y: 0,

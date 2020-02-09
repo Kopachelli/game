@@ -11,7 +11,9 @@ import (
 )
 
 //WorldService handle all activities in world
-type WorldService struct{}
+type WorldService struct {
+	playerService *PlayerService
+}
 
 //GenerateAreas generate nwe areas in new empty world
 func (s *WorldService) GenerateAreas(w *entities.World) {
@@ -36,13 +38,20 @@ func (s *WorldService) addPlayer(p *entities.Player, w *entities.World) {
 }
 
 func (s *WorldService) tick(w *entities.World) {
-	//nolint gomnd
-	if rand.Intn(99) == 0 {
+	//if s.isEventFired(dictionaries.PlayerBornChance) {
 		s.addPlayer(entities.NewPlayer(dictionaries.RaceHuman), w)
+	//}
+
+	for _, player := range w.GetPlayers() {
+		s.playerService.tick(player)
 	}
 
 	stat := w.GetStat()
 	log.Info().Int("areas number", stat.AreasNumber).Int("players number", stat.PlayerNumber).Msg("world stat")
+}
+
+func (s *WorldService) isEventFired(chance uint8) bool {
+	return rand.Intn(dictionaries.TotalPercent) < int(chance)
 }
 
 //Live start life in world
@@ -61,4 +70,9 @@ func (s *WorldService) Live(w *entities.World, q chan int, tickInterval uint8) {
 			return
 		}
 	}
+}
+
+//NewWorldService new world server instance
+func NewWorldService(ps *PlayerService) *WorldService {
+	return &WorldService{ps}
 }

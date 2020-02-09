@@ -21,7 +21,7 @@ func main() {
 
 	defer pg.Close()
 
-	ws := &services.WorldService{}
+	ws := services.NewWorldService(services.NewPlayerService())
 
 	world := entities.NewWorld()
 	ws.GenerateAreas(world)

@@ -40,6 +40,11 @@ func (w *World) AddPlayer(p *Player) {
 	w.mx.Unlock()
 }
 
+//GetPlayers get players in world
+func (w *World) GetPlayers() []*Player {
+	return w.players
+}
+
 //GetStat get world statistic
 func (w *World) GetStat() *WorldStat {
 	return &WorldStat{
